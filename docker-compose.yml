@@ -12,6 +12,9 @@ services:
     restart: always
     networks:
       - sipnet
+    #networks:
+      #kamailio:
+        #ipv4_address: 192.168.168.3
 
   db:
     build:
@@ -25,7 +28,29 @@ services:
       - "5435:5432"
     networks:
       - sipnet
+    #networks:
+      #kamailio:
+        #ipv4_address: 192.168.168.4
+
+  rtpengine:
+    build:
+      context: ./rtpengine
+      dockerfile: rtpengine.dockerfile
+    volumes:
+      - ./rtpengine/rtpengine.conf:/etc/rtpengine/rtpengine.conf
+    networks:
+      - sipnet
+    #networks:
+      #kamailio:
+        #ipv4_address: 192.168.168.5
+
 
 networks:
   sipnet:
     driver: bridge
+  kamailio:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 192.168.168.0/24
+         gateway: 192.168.168.1
