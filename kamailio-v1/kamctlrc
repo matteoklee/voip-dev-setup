@@ -1,0 +1,25 @@
+# Domain
+SIP_DOMAIN=kamailio.local
+
+# Database engine: PGSQL
+DBENGINE=PGSQL
+DBHOST=db
+DBPORT=5432
+DBNAME=kamailio
+
+# Users
+DBRWUSER="kamailio"
+DBRWPW="kamailiorw"
+DBROUSER="kamailioro"
+DBROPW="kamailioro"
+
+# Root access for kamdbctl
+DBROOTUSER="postgres"
+DBROOTPW="notkamailio"
+
+# Charset
+CHARSET="UTF8"
+
+INSTALL_EXTRA_TABLES=yes
+INSTALL_PRESENCE_TABLES=yes
+INSTALL_DBUID_TABLES=yes

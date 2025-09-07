@@ -1,0 +1,125 @@
+version: "3.9"
+
+services:
+  #db:
+    #image: mariadb:11
+    #container_name: mariadb
+    #environment:
+      #MYSQL_ROOT_PASSWORD: rootpass
+      #MYSQL_DATABASE: kamailio
+      #MYSQL_USER: kamailio
+      #MYSQL_PASSWORD: kamailiopass
+    #volumes:
+      #- ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    #networks:
+      #- sipnet
+
+  db:
+    build:
+      context: ./postgresql
+      dockerfile: postgres.dockerfile
+    ports:
+      - "5435:5432/tcp"
+    environment:
+      - POSTGRES_PASSWORD=notkamailio
+      - POSTGRES_DB=kamailio
+    networks:
+      - sipnet
+
+
+  #db:
+    #build:
+      #context: ./mariadb
+      #dockerfile: mariadb.dockerfile
+    #environment:
+      #- MARIADB_ROOT_PASSWORD=notkamailio
+      #- MARIADB_DATABASE=kamailio
+      #- MARIADB_USER=kamailio
+      #- MARIADB_PASSWORD=kamailiorw
+    #networks:
+      #- sipnet
+
+
+  #rtpengine:
+    #image: sipwise/rtpengine:mr11.2.1
+    #image: readytalk/rtpengine-docker:mr6.1.1.1
+    #image: drachtio/rtpengine
+    #container_name: rtpengine
+    #command: >
+    #  rtpengine --interface=0.0.0.0
+    #            --listen-ng=22222
+    #            --listen-cli=9900
+    #            --foreground
+    #ports:
+      #- "30000-40000:30000-40000/udp"
+      #- "22222:22222/tcp"
+      #- "9900:9900/tcp"
+    #networks:
+      #- sipnet
+    #restart: always
+
+
+  #rtpengine:
+    #build: ./rtpengine
+    #container_name: rtpengine
+    #volumes:
+      #- ./rtpengine/rtpengine.conf:/etc/rtpengine/rtpengine.conf
+    #ports:
+      #- "30000-40000:30000-40000/udp"
+      #- "22222:22222/udp"
+      #- "9900:9900/tcp"
+    #networks:
+      #- sipnet
+    #restart: always
+
+  kamailio:
+    depends_on:
+      - db
+    build: ./kamailio-v1
+      #context: ./kamailio
+      #dockerfile: kamailio.dockerfile
+    volumes:
+      - ./kamailio/etc:/etc/kamailio
+    ports:
+      - "5060:5060/udp"
+    restart: always
+    networks:
+      - sipnet
+
+
+  #kamailio:
+    #build: ./kamailio
+    #container_name: kamailio
+    #depends_on:
+      #- db
+      #- rtpengine
+    #ports:
+      #- "5060:5060/udp"
+      #- "5060:5060/tcp"
+    #networks:
+      #- sipnet
+    #environment:
+      #DB_HOST: db
+      #DB_USER: kamailio
+      #DB_PASS: kamailiopass
+      #DB_NAME: kamailio
+
+  #rtpengine:
+    #image: sipwise/rtpengine:mr11.2.1
+    #image: readytalk/rtpengine-docker:mr6.1.1.1
+    #image: drachtio/rtpengine
+    #container_name: rtpengine
+    #command: >
+    #  rtpengine --interface=0.0.0.0
+    #            --listen-ng=22222
+    #            --listen-cli=9900
+    #            --foreground
+    #ports:
+    #  - "30000-40000:30000-40000/udp"
+    #networks:
+    #  - sipnet
+
+
+networks:
+  sipnet:
+    driver: bridge

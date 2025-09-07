@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  kamailio:
+    build:
+      context: ./kamailio-v1
+      dockerfile: Dockerfile
+    ports:
+      - "5060:5060/udp"
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - sipnet
+
+  db:
+    build:
+      context: ./postgresql
+      dockerfile: postgres.dockerfile
+    environment:
+      POSTGRES_PASSWORD: notkamailio
+      POSTGRES_DB: kamailio
+      POSTGRES_USER: postgres
+    ports:
+      - "5435:5432"
+    networks:
+      - sipnet
+
+networks:
+  sipnet:
+    driver: bridge
