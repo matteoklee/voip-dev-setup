@@ -10,11 +10,11 @@ services:
     depends_on:
       - db
     restart: always
-    networks:
-      - sipnet
     #networks:
-      #kamailio:
-        #ipv4_address: 192.168.168.3
+      #- sipnet
+    networks:
+      kamailio:
+        ipv4_address: 192.168.168.3
 
   db:
     build:
@@ -26,11 +26,11 @@ services:
       POSTGRES_USER: postgres
     ports:
       - "5435:5432"
-    networks:
-      - sipnet
     #networks:
-      #kamailio:
-        #ipv4_address: 192.168.168.4
+      #- sipnet
+    networks:
+      kamailio:
+        ipv4_address: 192.168.168.4
 
   rtpengine:
     build:
@@ -38,12 +38,45 @@ services:
       dockerfile: rtpengine.dockerfile
     volumes:
       - ./rtpengine/rtpengine.conf:/etc/rtpengine/rtpengine.conf
+    ports:
+      - "22222:22222/udp"
+      - "2223:2223/udp"
+    #networks:
+      #- sipnet
     networks:
-      - sipnet
+      kamailio:
+        ipv4_address: 192.168.168.5
+
+
+  #rtpproxy:
+    #build:
+      #context: ./rtpproxy
+      #dockerfile: Dockerfile
+    
+    #image: sippylabs/rtpproxy
+    #rtpproxy -F -s /var/run/rtpproxy.sock -l 192.168.168.6
+    #command: >
+      #rtpproxy -l 192.168.168.6 -s udp:127.0.0.1
+    
+    #ports:
+      #- "7722:7722/udp"
+    #restart: unless-stopped
     #networks:
       #kamailio:
-        #ipv4_address: 192.168.168.5
+        #ipv4_address: 192.168.168.6
 
+  rtpproxy:
+    build:
+      context: ./rtpproxy
+      dockerfile: Dockerfile
+    ports:
+      #- "6000-60000:6000-60000/udp"
+      - "7722:7722/udp"
+    restart: unless-stopped
+    networks:
+      kamailio:
+        ipv4_address: 192.168.168.6
+    privileged: true
 
 networks:
   sipnet:

@@ -191,7 +191,6 @@ class kamailio:
                 return -255
             if KSR.is_BYE() :
                 # do accounting ...
-                KSR.err("================DEBUG WITHINDIALOG -> BYE")
                 KSR.setflag(FLT_ACC)
                 # ... even if the transaction fails
                 KSR.setflag(FLT_ACCFAILED)
@@ -251,7 +250,6 @@ class kamailio:
         # when routing via usrloc, log the missed calls also
         if KSR.is_INVITE() :
             KSR.setflag(FLT_ACCMISSED)
-            KSR.err("=================DEBUG INVITE")
 
         self.ksr_route_relay(msg)
         return -255

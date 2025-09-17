@@ -51,4 +51,7 @@ RUN apt-get update && \
   apt-get -y install /tmp/*.deb && \
   rm -rf /var/lib/apt/lists/* /tmp/*.deb
 
+EXPOSE 22222
+EXPOSE 2223
+
 CMD ["/usr/bin/rtpengine", "--config-file=/etc/rtpengine/rtpengine.conf", "--foreground"]
