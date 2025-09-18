@@ -11,7 +11,7 @@ services:
       - db
     restart: always
     #networks:
-      #- sipnet
+    #  - sipnet
     networks:
       kamailio:
         ipv4_address: 192.168.168.3
@@ -27,7 +27,7 @@ services:
     ports:
       - "5435:5432"
     #networks:
-      #- sipnet
+    #  - sipnet
     networks:
       kamailio:
         ipv4_address: 192.168.168.4
@@ -42,7 +42,7 @@ services:
       - "22222:22222/udp"
       - "2223:2223/udp"
     #networks:
-      #- sipnet
+    #  - sipnet
     networks:
       kamailio:
         ipv4_address: 192.168.168.5
@@ -76,6 +76,8 @@ services:
     networks:
       kamailio:
         ipv4_address: 192.168.168.6
+    #networks:
+    #  - sipnet
     privileged: true
 
 networks:

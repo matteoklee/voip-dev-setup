@@ -1,6 +1,7 @@
 FROM ghcr.io/kamailio/kamailio:6.0.2-noble
 
-ADD kamailio.cfg /etc/kamailio/
+#ADD kamailio.cfg /etc/kamailio/
+ADD v2_kamailio.cfg /etc/kamailio/kamailio.cfg
 ADD kamailio-local.cfg /etc/kamailio/
 
 ADD kamailio.py /etc/kamailio/

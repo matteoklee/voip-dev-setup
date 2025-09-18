@@ -66,8 +66,17 @@ def ksr_request_route():
     # record routing for dialog forming requests (in case they are routed)
     # - remove preloaded route headers
     KSR.hdr.remove("Route")
-    if KSR.is_method_in("IS") :
+    
+    
+    #if KSR.is_method_in("IS") :
+    #    KSR.rr.record_route()
+
+
+    if KSR.is_method("INVITE"):
         KSR.rr.record_route()
+        KSR.dialog.dlg_manage()
+        ksr_route_natmanage()
+
 
 
     # account only INVITEs
@@ -152,6 +161,8 @@ def ksr_route_reqinit():
         #            + srcip + ":" + str(KSR.pv.get("$sp")) + ")\n")
         #    KSR.htable.sht_seti("ipban", srcip, 1)
         #    return -255
+        
+        #return -255
 
     if KSR.corex.has_user_agent() > 0 :
         ua = KSR.kx.gete_ua()
@@ -193,10 +204,23 @@ def ksr_route_withindlg():
             KSR.setflag(FLT_ACC)
             # ... even if the transaction fails
             KSR.setflag(FLT_ACCFAILED)
+
+            
+            KSR.dialog.dlg_manage()
+            KSR.rtpengine.rtpengine_manage("replace-origin replace-session-connection")
+            ksr_route_relay()
+            return -255
+
         elif KSR.is_ACK() :
             # ACK is forwarded statelessly
             if ksr_route_natmanage()==-255 :
                 return -255
+            
+            if KSR.pv.get("$rb") is not None or KSR.pv.get("$rb") != "":
+                pass
+            if KSR.pv.get("$rb") and len(KSR.pv.get("$rb")) > 0:
+                KSR.rtpengine.rtpengine_manage("replace-origin replace-session-connection")
+
             ksr_route_relay()
             return -255
         elif KSR.is_NOTIFY() :
@@ -209,7 +233,7 @@ def ksr_route_withindlg():
         return -255
 
     if KSR.is_ACK() :
-        KSR.pv.set("$duri", KSR.pv.get("$ruri"))
+        #KSR.pv.set("$duri", KSR.pv.get("$ruri"))
         
         if KSR.tm.t_check_trans() >0 :
             # no loose-route, but stateful ACK
@@ -321,12 +345,12 @@ def ksr_route_natmanage():
     #KSR.rtpproxy.rtpproxy_manage("co")
 
     ##WITH RTPENGINE DUMMY TEST:
-    if KSR.nathelper.nat_uac_test("8") > 0:
+    if KSR.nathelper.nat_uac_test(8) > 0:
         KSR.rtpengine.rtpengine_manage("SIP-source-address replace-origin replace-session-connection")
-        KSR.rtpproxy.rtpproxy_manage("co")
+        #KSR.rtpproxy.rtpproxy_manage("co")
     else:
         KSR.rtpengine.rtpengine_manage("replace-origin replace-session-connection")
-        KSR.rtpproxy.rtpproxy_manage("cor")
+        #KSR.rtpproxy.rtpproxy_manage("cor")
 
     ######
 

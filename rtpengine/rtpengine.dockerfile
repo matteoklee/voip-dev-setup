@@ -7,11 +7,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get -y install build-essential git curl \
   && echo 'man-db man-db/auto-update boolean false' | debconf-set-selections \
-  && git clone https://github.com/sipwise/rtpengine \
+  && git clone https://github.com/sipwise/rtpengine.git \
   && cd rtpengine \
   && git checkout ${TAG_NAME} \
   && apt-get -y build-dep -Ppkg.ngcp-rtpengine.nobcg729 . \
-  && dpkg-buildpackage -Ppkg.ngcp-rtpengine.nobcg729
+  && DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -Ppkg.ngcp-rtpengine.nobcg729
 
 FROM debian:bookworm
 
@@ -50,6 +50,8 @@ RUN apt-get update && \
   libxmlrpc-core-c3 && \
   apt-get -y install /tmp/*.deb && \
   rm -rf /var/lib/apt/lists/* /tmp/*.deb
+
+#COPY ./rtpengine.conf /etc/rtpengine/rtpengine.conf
 
 EXPOSE 22222
 EXPOSE 2223
